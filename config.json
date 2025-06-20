@@ -1,0 +1,6 @@
+{
+  "gmail_client_secret": "client_secret.json",
+  "gcp_project": "doc-extract-454213",
+  "gcp_location": "us-central1",
+  "service_account_key": "service_account_key.json"
+}

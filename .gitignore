@@ -67,7 +67,6 @@ venv.bak/
 # Secrets
 *.json
 !config.json
-!service_account_key.json
 token.json
 client_secret.json
 

@@ -37,10 +37,3 @@ pip install -r requirements.txt
 ```bash
 python email_ai.py
 ```
-
-## Notes
-- **Never commit your credentials to version control.**
-- This project is for educational purposes. Review and adapt for production use.
-
-## License
-MIT 

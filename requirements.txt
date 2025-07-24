@@ -5,4 +5,7 @@ google-auth-oauthlib
 requests
 python-dotenv
 pandas
-openpyxl 
+openpyxl
+langchain
+langchain-google-vertexai
+google-cloud-firestore 

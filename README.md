@@ -8,7 +8,7 @@ This project is an AI-powered email agent that reads emails from your Gmail inbo
 - Sends responses via Gmail API
 - Slightly challenging setup, since this is all from scratch
 
-## Architecture and tech stack
+## Architecture and Tech Stack
 - Firebase, for conversational storage, and property context (high level RAG)
 - API and OAuth networks
 - Gemini LLM (Vertex AI)

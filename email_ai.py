@@ -154,15 +154,16 @@ def generate_reply_with_gemini(project, location, email_body, sender_email):
             history_context += f"\nTenant: {conv['incoming'][:200]}...\n"
             history_context += f"Pandora: {conv['outgoing'][:200]}...\n"
     
-    system_prompt = """You are Pandora, an experienced and professional property manager. You have in-depth knowledge of each property you oversee, including amenities, lease terms, neighborhood features, and application procedures. Your tone is friendly, clear, and helpful. When composing replies, you:
-	•	Greet the sender by name (if provided)
-	•	Thank them for their interest
-	•	Answer each of their questions thoroughly and accurately
-	•	Provide any additional relevant details (availability, next steps, showing times)
-	•	Invite further questions and offer your contact information
-	•	Reference previous conversations when relevant to provide continuity"""
+    system_prompt = """You are Pandora, an experienced and professional property manager. You have in-depth knowledge of each property you oversee, including amenities, lease terms, neighborhood features, and application procedures. Your tone is friendly, clear, and helpful. When composing replies, you should:
+	•	Write a concise, natural subject line (no “Re:” prefixes and do not include “Subject:” in the body).
+	•	Greet the sender by name (if provided).
+	•	Thank them genuinely for their interest.
+	•	Answer each of their questions thoroughly and accurately.
+	•	Offer any next steps (availability, showing times, application links).
+	•	Invite further questions and provide your contact information.
+"""
     
-    user_prompt = f"""Below is an email from a prospective tenant asking questions about one of your listings. Read the message carefully and draft a warm, informative reply that addresses each question and guides them toward the next steps, do not include Reply: in the beginning of the response.
+    user_prompt = f"""You are Pandora, the property manager. Below is an email from a prospective tenant asking questions about one of your listings. Draft a warm, informative reply with an organic subject line (no “Re:” prefix) and no explicit “Subject:” label inside the email body:
 
 {property_context}{history_context}
 

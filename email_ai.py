@@ -15,7 +15,6 @@ import vertexai
 from vertexai.generative_models import GenerativeModel
 import pandas as pd
 
-# --- CONFIGURATION ---
 GMAIL_SCOPES = ['https://www.googleapis.com/auth/gmail.readonly', 'https://www.googleapis.com/auth/gmail.modify']
 CONFIG_PATH = "config.json"
 TOKEN_PATH = "token.json"
@@ -82,10 +81,8 @@ def send_email(service, to, subject, message_text, user_id='me'):
     service.users().messages().send(userId=user_id, body=body).execute()
 
 def load_property_data(excel_path="Properties Listing.xlsx"):
-    """Load property information from Excel file."""
     try:
         df = pd.read_excel(excel_path)
-        # Convert DataFrame to a formatted string
         property_info = "PROPERTY INFORMATION:\n"
         for i, (index, row) in enumerate(df.iterrows()):
             property_info += f"\nProperty {i + 1}:\n"
@@ -100,7 +97,6 @@ def load_property_data(excel_path="Properties Listing.xlsx"):
         return ""
 
 def load_conversation_history(sender_email):
-    """Load previous conversation history for a sender."""
     try:
         with open('conversation_history.json', 'r') as f:
             history = json.load(f)
@@ -109,7 +105,6 @@ def load_conversation_history(sender_email):
         return []
 
 def save_conversation_history(sender_email, email_body, reply):
-    """Save conversation to history."""
     try:
         with open('conversation_history.json', 'r') as f:
             history = json.load(f)
@@ -125,14 +120,12 @@ def save_conversation_history(sender_email, email_body, reply):
         'outgoing': reply
     })
     
-    # Keep only last 5 conversations to manage context length
     history[sender_email] = history[sender_email][-5:]
     
     with open('conversation_history.json', 'w') as f:
         json.dump(history, f, indent=2)
 
 def generate_reply_with_gemini(project, location, email_body, sender_email):
-    # Load service account credentials explicitly
     config = load_config()
     credentials = service_account.Credentials.from_service_account_file(
         config['service_account_key'],
@@ -142,11 +135,9 @@ def generate_reply_with_gemini(project, location, email_body, sender_email):
     vertexai.init(project=project, location=location, credentials=credentials)
     model = GenerativeModel("gemini-2.0-flash-001")
     
-    # Load property context and conversation history
     property_context = load_property_data()
     conversation_history = load_conversation_history(sender_email)
     
-    # Format conversation history
     history_context = ""
     if conversation_history:
         history_context = "\n\nPREVIOUS CONVERSATION HISTORY:\n"
@@ -155,7 +146,7 @@ def generate_reply_with_gemini(project, location, email_body, sender_email):
             history_context += f"Pandora: {conv['outgoing'][:200]}...\n"
     
     system_prompt = """You are Pandora, an experienced and professional property manager. You have in-depth knowledge of each property you oversee, including amenities, lease terms, neighborhood features, and application procedures. Your tone is friendly, clear, and helpful. When composing replies, you should:
-	•	Write a concise, natural subject line (no “Re:” prefixes and do not include “Subject:” in the body).
+	•	Write a concise, natural subject line (no "Re:" prefixes and do not include "Subject:" in the body).
 	•	Greet the sender by name (if provided).
 	•	Thank them genuinely for their interest.
 	•	Answer each of their questions thoroughly and accurately.
@@ -163,14 +154,13 @@ def generate_reply_with_gemini(project, location, email_body, sender_email):
 	•	Invite further questions and provide your contact information.
 """
     
-    user_prompt = f"""You are Pandora, the property manager. Below is an email from a prospective tenant asking questions about one of your listings. Draft a warm, informative reply with an organic subject line (no “Re:” prefix) and no explicit “Subject:” label inside the email body:
+    user_prompt = f"""You are Pandora, the property manager. Below is an email from a prospective tenant asking questions about one of your listings. Draft a warm, informative reply with an organic subject line (no "Re:" prefix) and no explicit "Subject:" label inside the email body:
 
 {property_context}{history_context}
 
 Email from prospective tenant:
 {email_body}"""
     
-    # Combine system and user prompts
     full_prompt = f"{system_prompt}\n\n{user_prompt}"
     response = model.generate_content(full_prompt)
     return response.text
@@ -183,11 +173,9 @@ def main():
         print("No unread emails found.")
         return
 
-    # Only process the first unread email
     email = emails[0]
     print(f"Processing email from {email['sender']} with subject '{email['subject']}'")
     
-    # Extract email address from sender
     sender_email = email['sender'].split('<')[1].split('>')[0] if '<' in email['sender'] else email['sender']
     
     reply = generate_reply_with_gemini(
@@ -197,7 +185,6 @@ def main():
         sender_email=sender_email
     )
     
-    # Save conversation to history
     save_conversation_history(sender_email, email['body'], reply)
     
     send_email(

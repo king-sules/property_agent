@@ -14,6 +14,7 @@ This project is an AI-powered email agent that reads emails from your Gmail inbo
 - Gemini LLM (Vertex AI)
 - Gmail
 - JSON
+- Langchain
 
   
 
